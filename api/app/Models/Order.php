@@ -48,6 +48,8 @@ use Illuminate\Database\Eloquent\Model;
  * @property-read int|null $order_items_count
  * @method static \Database\Factories\OrderFactory factory(...$parameters)
  * @method static \Illuminate\Database\Eloquent\Builder|Order whereFirstName($value)
+ * @property-read mixed $admin_revenue
+ * @property-read mixed $name
  */
 class Order extends Model
 {

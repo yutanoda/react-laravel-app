@@ -6,6 +6,7 @@ use App\Http\Requests\RegisterRequest;
 use App\Http\Requests\UpdateInfoRequest;
 use App\Http\Requests\UpdatePasswordRequest;
 use App\Models\User;
+use App\Http\Resources\UserResource;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -35,7 +36,7 @@ class AuthController extends Controller
 
         $adminLogin = $request->path() === 'api/admin/login';
 
-        if ($admimLogin && !$user->is_admin) {
+        if ($adminLogin && !$user->is_admin) {
             return response([
                 'error' => 'Access Denied'
             ], Response::HTTP_UNAUTHORIZED);
@@ -53,7 +54,8 @@ class AuthController extends Controller
 
     public function user(Request $request)
     {
-        return $request->user();
+        $user = $request->user();
+        return new UserResource($user);
     }
 
     public function logout()
