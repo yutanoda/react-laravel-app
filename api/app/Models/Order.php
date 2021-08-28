@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\OrderItem;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -42,10 +43,33 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|Order whereUserId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Order whereZip($value)
  * @mixin \Eloquent
+ * @property string $first_name
+ * @property-read \Illuminate\Database\Eloquent\Collection|OrderItem[] $orderItems
+ * @property-read int|null $order_items_count
+ * @method static \Database\Factories\OrderFactory factory(...$parameters)
+ * @method static \Illuminate\Database\Eloquent\Builder|Order whereFirstName($value)
  */
 class Order extends Model
 {
     use HasFactory;
 
     protected $guarded = [];
+
+    public function orderItems()
+    {
+        return $this->hasMany(OrderItem::class);
+    }
+
+    public function getNameAttribute()
+    {
+        return $this->first_name . ' ' . $this->last_name;
+    }
+
+    public function getAdminRevenueAttribute()
+    {
+        return $this->orderItems->sum(fn(OrderItem $item) => $item->admin_revenue);
+    }
 }
+
+
+
