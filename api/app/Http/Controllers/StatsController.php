@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Link;
 use App\Models\Order;
 use App\Models\User;
+use Illuminate\Support\Facades\Redis;
 
 class StatsController extends Controller
 {
@@ -27,16 +28,6 @@ class StatsController extends Controller
 
     public function rankings()
     {
-        $ambassadors = User::ambassadors()->get();
-
-        $rankings = $ambassadors->map(function (User $user) {
-
-            return [
-                'name' => $user->name,
-                'revenue' => $user->revenue
-            ];
-        });
-
-        return $rankings->sortByDesc('revenue')->values();
+        return Redis::zrevrange('rankings', 0, -1, 'WITHSCORES');
     }
 }
