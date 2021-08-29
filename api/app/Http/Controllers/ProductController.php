@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Str;
 
 class ProductController extends Controller
 {
@@ -57,8 +58,15 @@ class ProductController extends Controller
     {
         $page = $request->input('page', 1);
         $products =  \Cache::remember('products_backend', 30*60, fn() => Product::all());
-        $total = $products->count();
         
+        if ($s = $request->input('s')) {
+            $products = $products
+                ->filter(
+                    fn(Product $product) => Str::contains($product->title, $s) || Str::contains($product->description, $s)
+                );
+        }
+        $total = $products->count();
+
         return [
             'data' => $products->forPage($page, 9)->values(),
             'meta' => [
