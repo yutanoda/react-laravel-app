@@ -46,7 +46,6 @@ class ProductController extends Controller
             return $products;
         }
 
-        sleep(2);
         $products = Product::all();
 
         \Cache::set('products_fronted', $products, 30*60);  //30 min
@@ -54,10 +53,19 @@ class ProductController extends Controller
         return $products;
     }
 
-    public function backend()
+    public function backend(Request $request)
     {
-        return \Cache::remember('products_backend', 30*60, function(){
-            return Product::paginate();
-        });
+        $page = $request->input('page', 1);
+        $products =  \Cache::remember('products_backend', 30*60, fn() => Product::all());
+        $total = $products->count();
+        
+        return [
+            'data' => $products->forPage($page, 9)->values(),
+            'meta' => [
+                'total' => $total,
+                'page' => $page,
+                'last_page' => ceil($total / 9)
+            ]
+        ];
     }
 }
