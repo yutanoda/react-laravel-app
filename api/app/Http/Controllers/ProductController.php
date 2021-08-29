@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Product;
+use App\Events\ProductUpdatedEvent;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Str;
@@ -19,6 +20,8 @@ class ProductController extends Controller
     {
         $product = Product::create($request->only('title', 'description', 'image', 'price'));
 
+        event(new ProductUpdatedEvent);
+
         return response($product, Response::HTTP_CREATED);
     }
 
@@ -31,12 +34,16 @@ class ProductController extends Controller
     {
         $product->update($request->only('title', 'description', 'image', 'price'));
 
+        event(new ProductUpdatedEvent);
+
         return response($product, Response::HTTP_ACCEPTED);
     }
 
     public function destroy(Product $product)
     {
         $product->delete();
+
+        event(new ProductUpdatedEvent);
 
         return response(null, Response::HTTP_NO_CONTENT);
     }
