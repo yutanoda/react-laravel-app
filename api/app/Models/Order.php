@@ -50,6 +50,7 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|Order whereFirstName($value)
  * @property-read mixed $admin_revenue
  * @property-read mixed $name
+ * @property-read mixed $ambassador_revenue
  */
 class Order extends Model
 {
